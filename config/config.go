@@ -43,7 +43,7 @@ func LoadEnv() {
 		DBName:          getEnv("DB_NAME", "project_management"),
 		JWTSecret:       getEnv("JWT_SECRET", "rahasia"),
 		JWTRefreshToken: getEnv("JWT_REFRESH_TOKEN", "24h"),
-		JWTExpired:      getEnv("JWT_EXPIRED", "1440"),
+		JWTExpired:      getEnv("JWT_EXPIRED", "6h"),
 	}
 }
 
