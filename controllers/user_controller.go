@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"github.com/hfishere/wpu-project-management/models"
 	"github.com/hfishere/wpu-project-management/services"
 	"github.com/hfishere/wpu-project-management/utils"
@@ -109,4 +110,36 @@ func (c *UserController) GetUserPagination(ctx *fiber.Ctx) error {
 	}
 
 	return utils.SuccessPagination(ctx, "Data ditemukan", usersResponse, meta)
+}
+
+func (c *UserController) UpdateUser(ctx *fiber.Ctx) error {
+	id := ctx.Params("id")
+	publicID, err := uuid.Parse(id)
+	if err != nil {
+		return utils.BadRequest(ctx, "Invalid ID Format", err.Error())
+	}
+
+	var user models.User
+	if err := ctx.BodyParser(&user); err != nil {
+		return utils.BadRequest(ctx, "Gagal Parsing Data", err.Error())
+	}
+
+	user.PublicID = publicID
+
+	if err := c.service.Update(&user); err != nil {
+		return utils.BadRequest(ctx, "Gagal Update Data", err.Error())
+	}
+
+	userUpdated, err := c.service.GetByPublicID(id)
+	if err != nil {
+		return utils.InternalServerError(ctx, "Gagal Ambil Data", err.Error())
+	}
+
+	var userResponse models.UserResponse
+	err = copier.Copy(&userResponse, &userUpdated)
+	if err != nil {
+		return utils.InternalServerError(ctx, "Error parsing data", err.Error())
+	}
+
+	return utils.Success(ctx, "Update data berhasil", userResponse)
 }

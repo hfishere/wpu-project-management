@@ -13,6 +13,7 @@ type UserRepository interface {
 	FindByID(id uint) (*models.User, error)
 	FindByPublicID(public_id string) (*models.User, error)
 	FindAllPagination(filter, sort string, limit, offset int) ([]models.User, int64, error)
+	Update(user *models.User) error
 }
 
 type userRepository struct{}
@@ -79,4 +80,10 @@ func (r *userRepository) FindAllPagination(filter, sort string, limit, offset in
 
 	err := db.Limit(limit).Offset(offset).Find(&users).Error
 	return users, total, err
+}
+
+func (r *userRepository) Update(user *models.User) error {
+	return config.DB.Model(&models.User{}).Where("public_id = ?", user.PublicID).Updates(map[string]interface{}{
+		"name": user.Name,
+	}).Error
 }
