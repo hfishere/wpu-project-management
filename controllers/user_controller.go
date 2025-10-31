@@ -5,6 +5,7 @@ import (
 	"github.com/hfishere/wpu-project-management/models"
 	"github.com/hfishere/wpu-project-management/services"
 	"github.com/hfishere/wpu-project-management/utils"
+	"github.com/jinzhu/copier"
 )
 
 type UserController struct {
@@ -26,5 +27,8 @@ func (c *UserController) Register(ctx *fiber.Ctx) error {
 		return utils.BadRequest(ctx, "Registrasi Gagal", err.Error())
 	}
 
-	return utils.Success(ctx, "Register Success", user)
+	var userResponse models.UserResponse
+	_ = copier.Copy(&userResponse, &user)
+
+	return utils.Success(ctx, "Register Success", userResponse)
 }
