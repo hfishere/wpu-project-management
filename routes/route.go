@@ -43,4 +43,5 @@ func Setup(
 	boardGroup.Put("/:id", bc.UpdateBoard)
 	boardGroup.Post("/:id/members", bc.AddBoardMembers)
 	boardGroup.Delete("/:id/members", bc.RemoveBoardMembers)
+	boardGroup.Get("/my", bc.GetMyBoardPagination)
 }
