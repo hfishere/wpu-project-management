@@ -1,6 +1,9 @@
 package controllers
 
 import (
+	"math"
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/hfishere/wpu-project-management/models"
 	"github.com/hfishere/wpu-project-management/services"
@@ -74,4 +77,36 @@ func (c *UserController) GetUser(ctx *fiber.Ctx) error {
 	}
 
 	return utils.Success(ctx, "Data berhasil ditemukan", userResponse)
+}
+
+func (c *UserController) GetUserPagination(ctx *fiber.Ctx) error {
+	page, _ := strconv.Atoi(ctx.Query("page", "1"))
+	limit, _ := strconv.Atoi(ctx.Query("limit", "10"))
+	offset := (page - 1) * limit
+
+	filter := ctx.Query("filter", "")
+	sort := ctx.Query("sort", "")
+
+	users, total, err := c.service.GetAllPagination(filter, sort, limit, offset)
+	if err != nil {
+		return utils.BadRequest(ctx, "Gagal Mengambil Data", err.Error())
+	}
+
+	var usersResponse []models.UserResponse
+	_ = copier.Copy(&usersResponse, users)
+
+	meta := utils.PaginationMeta{
+		Page:      page,
+		Limit:     limit,
+		Total:     int(total),
+		TotalPage: int(math.Ceil(float64(total) / float64(limit))),
+		Filter:    filter,
+		Sort:      sort,
+	}
+
+	if total == 0 {
+		utils.NotFoundPagination(ctx, "Data pengguna tidak ditemukan", usersResponse, meta)
+	}
+
+	return utils.SuccessPagination(ctx, "Data ditemukan", usersResponse, meta)
 }
