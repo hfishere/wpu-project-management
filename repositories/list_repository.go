@@ -10,6 +10,10 @@ type ListRepository interface {
 	Create(list *models.List) error
 	Update(list *models.List) error
 	Delete(id uint) error
+	UpdatePosition(boardPublicID string, position []string) error
+	GetCardPosition(listPublicID string) ([]uuid.UUID, error)
+	FindByBoardID(boardPublicID string) ([]models.List, error)
+	FindByPublicID(publicID string) (*models.List, error)
 }
 
 type listRepository struct{}
@@ -44,4 +48,23 @@ func (r *listRepository) GetCardPosition(listPublicID string) ([]uuid.UUID, erro
 		Where("lists.public_id = ?", listPublicID).Error
 
 	return position.CardOrder, err
+}
+
+func (r *listRepository) FindByBoardID(boardPublicID string) ([]models.List, error) {
+	var list []models.List
+	err := config.DB.
+		Where("board_public_id = ?", boardPublicID).
+		Order("internal_id ASC").
+		Find(&list).Error
+
+	return list, err
+}
+
+func (r *listRepository) FindByPublicID(publicID string) (*models.List, error) {
+	var list models.List
+	err := config.DB.
+		Where("public_id = ?", publicID).
+		Find(&list).Error
+
+	return &list, err
 }
