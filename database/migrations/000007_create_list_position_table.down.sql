@@ -1,0 +1,1 @@
+DROP IF EXIST list_positions;

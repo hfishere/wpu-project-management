@@ -14,7 +14,8 @@ import (
 func Setup(
 	app *fiber.App,
 	uc *controllers.UserController,
-	bc *controllers.BoardController) {
+	bc *controllers.BoardController,
+	lc *controllers.ListController) {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -44,4 +45,7 @@ func Setup(
 	boardGroup.Post("/:id/members", bc.AddBoardMembers)
 	boardGroup.Delete("/:id/members", bc.RemoveBoardMembers)
 	boardGroup.Get("/my", bc.GetMyBoardPagination)
+
+	listGroup := api.Group("/lists")
+	listGroup.Post("/", lc.CreateList)
 }
