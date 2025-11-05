@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/hfishere/wpu-project-management/config"
 	"github.com/hfishere/wpu-project-management/controllers"
 	"github.com/hfishere/wpu-project-management/database/seed"
@@ -19,6 +20,9 @@ func main() {
 	seed.SeedAdmin()
 
 	app := fiber.New()
+
+	// CORS middleware, set for DEV ONLY!!
+	app.Use(cors.New())
 
 	userRepo := repositories.NewUserRepository()
 	userService := services.NewUserService(userRepo)

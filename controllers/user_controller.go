@@ -21,13 +21,24 @@ func NewUserController(s services.UserService) *UserController {
 }
 
 func (c *UserController) Register(ctx *fiber.Ctx) error {
-	user := new(models.User)
+	requestBody := new(utils.RegisterRequest)
 
-	if err := ctx.BodyParser(user); err != nil {
+	if err := ctx.BodyParser(requestBody); err != nil {
 		return utils.BadRequest(ctx, "Gagal Parsing Data", err.Error())
 	}
 
-	if err := c.service.Register(user); err != nil {
+	// Validasi password & confirm password
+	if requestBody.Password != requestBody.ConfirmPassword {
+		return utils.BadRequest(ctx, "Password tidak sama dengan Konfirmasi Password", "")
+	}
+
+	user := models.User{
+		Name:     requestBody.Name,
+		Email:    requestBody.Email,
+		Password: requestBody.Password,
+	}
+
+	if err := c.service.Register(&user); err != nil {
 		return utils.BadRequest(ctx, "Registrasi Gagal", err.Error())
 	}
 
