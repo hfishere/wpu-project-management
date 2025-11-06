@@ -133,3 +133,17 @@ func (c *BoardController) GetMyBoardPagination(ctx *fiber.Ctx) error {
 
 	return utils.SuccessPagination(ctx, "Data board berhasil diambil", board, meta)
 }
+
+func (c *BoardController) GetByBoardID(ctx *fiber.Ctx) error {
+	boardPublicID := ctx.Params("board_id")
+	if _, err := uuid.Parse(boardPublicID); err != nil {
+		return utils.BadRequest(ctx, "UUID tidak valid", err.Error())
+	}
+
+	board, err := c.service.GetByPublicID(boardPublicID)
+	if err != nil {
+		return utils.BadRequest(ctx, "Gagal mengambil data Board", err.Error())
+	}
+
+	return utils.Success(ctx, "Berhasil mendapatkan data", board)
+}
