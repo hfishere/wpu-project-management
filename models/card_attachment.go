@@ -13,4 +13,10 @@ type CardAttachment struct {
 	UserID     int64     `json:"user_internal_id" db:"user_internal_id"`
 	CardID     int64     `json:"card_internal_id" db:"card_internal_id"`
 	CreatedAt  time.Time `json:"created_at" db:"created_at"`
+
+	FileURL string `json:"file_url" gorm:"-"`
+}
+
+func (CardAttachment) TableName() string {
+	return "card_attachment"
 }
