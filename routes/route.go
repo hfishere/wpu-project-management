@@ -53,6 +53,7 @@ func Setup(
 	listGroup.Post("/", lc.CreateList)
 	listGroup.Put("/:id", lc.UpdateList)
 	listGroup.Delete("/:id", lc.DeleteList)
+	listGroup.Get("/:list_id/cards", cc.GetCardOnList)
 
 	cardGroup := api.Group("/cards")
 	cardGroup.Post("/", cc.CreateCard)

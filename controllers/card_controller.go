@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"github.com/hfishere/wpu-project-management/models"
 	"github.com/hfishere/wpu-project-management/services"
 	"github.com/hfishere/wpu-project-management/utils"
@@ -43,4 +44,18 @@ func (c *CardController) CreateCard(ctx *fiber.Ctx) error {
 	}
 
 	return utils.Success(ctx, "Berhasil Membuat Card", card)
+}
+
+func (c *CardController) GetCardOnList(ctx *fiber.Ctx) error {
+	listPublicID := ctx.Params("list_id")
+	if _, err := uuid.Parse(listPublicID); err != nil {
+		return utils.BadRequest(ctx, "List ID tidak valid", err.Error())
+	}
+
+	card, err := c.service.GetByListID(listPublicID)
+	if err != nil {
+		return utils.NotFound(ctx, "Card tidak ditemukan", err.Error())
+	}
+
+	return utils.Success(ctx, "Data Card berhasil diambil", card)
 }
