@@ -20,7 +20,7 @@ func (a *UUIDArray) Scan(value interface{}) error {
 	case string:
 		str = v
 	default:
-		return errors.New("failde to parse U=UUIDArray: unsupported type")
+		return errors.New("failed to parse UUIDArray: unsupported type")
 	}
 
 	str = strings.TrimPrefix(str, "{")
